@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Digital Accredited Certificates</title>
-
   <link rel="icon" href="imgs/favication.png" type="image/svg+xml" />
-
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet" />
 
- <style>
+  <style>
     /* ══════════════════════════════════════════════════════════════
        DESIGN TOKENS & RESET
        ══════════════════════════════════════════════════════════════ */
@@ -20,7 +18,6 @@
       --text-gray:      #6b7280;
       --border-light:   #e5e7eb;
       --danger:         #ef4444;
-      --cert-gray:      #CFCACE; 
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,24 +31,27 @@
       display: flex;
       flex-direction: column;
       font-weight: 600; 
-      overflow-x: auto; /* السماح للصفحة بالكامل بعمل سكرول أفقي */
+      overflow-x: auto; 
     }
 
     /* ══════════════════════════════════════════════════════════════
-       HEADER & FORM
+       HEADER & FORM (تم عكس أماكن اللوجو والنص هنا)
        ══════════════════════════════════════════════════════════════ */
     .bank-header { padding: 30px 40px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; color: white; }
-    .header-title { justify-self: start; font-size: 18px; font-weight: 700; line-height: 1.3; }
-    .header-title span { font-size: 14px; font-weight: 400; color: #cbd5e1; }
+    
+    /* اللوجو يروح يمين (start في الـ rtl) */
+    .header-logo { justify-self: start; display: flex; align-items: center; gap: 12px; }
+    .header-logo img { filter: brightness(0) invert(1); height: 44px; } 
+    
     .header-center { justify-self: center; }
     .lang-btn { background: transparent; border: 1.5px solid white; color: white; padding: 6px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
     .lang-btn:hover { background: rgba(255,255,255,0.15); }
-    .header-logo { justify-self: end; display: flex; align-items: center; gap: 12px; }
-    .header-logo img { filter: brightness(0) invert(1); height: 44px; } 
-
-    /* تم إزالة align-items: center للسماح بتمدد المحتوى بحرية */
-    .main-content { flex: 1; padding: 20px 40px; display: flex; flex-direction: column; gap: 40px; }
     
+    /* النص يروح شمال (end في الـ rtl) */
+    .header-title { justify-self: end; text-align: end; font-size: 18px; font-weight: 700; line-height: 1.3; }
+    .header-title span { font-size: 14px; font-weight: 400; color: #cbd5e1; display: block; }
+
+    .main-content { flex: 1; padding: 20px 40px; display: flex; flex-direction: column; gap: 40px; }
     .form-card { width: 100%; max-width: 1100px; align-self: center; background: linear-gradient(270deg, #ffffff 60%, #fff0ed 100%); border-radius: 24px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
     .form-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; color: var(--bg-navy); }
     .required-note { font-size: 13px; color: var(--text-gray); margin-bottom: 30px; font-weight: 700; }
@@ -79,152 +79,63 @@
     .btn-search { background: var(--btn-purple); border: none; color: white; padding: 0 50px; height: 48px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
 
     /* ══════════════════════════════════════════════════════════════
-       RESULTS SECTION (الشهادة حرة وبدون Container داخلي مقفول)
+       RESULTS SECTION (PDF VIEWER)
        ══════════════════════════════════════════════════════════════ */
     .results-container { 
-      width: max-content; /* تتمدد مع حجم الشهادة */
-      min-width: 100%; 
-      align-self: center; /* توسيط الحاوية */
+      width: 100%; 
+      max-width: 1100px; 
+      align-self: center; 
       display: none; 
       animation: fadeIn 0.5s ease-in-out; 
       margin: 0 auto; 
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
     .results-header-title { font-size: 32px; font-weight: 700; color: white; margin-bottom: 20px; text-align: center; }
     
     .cert-wrapper { 
-      background: #f0f0f0; 
+      background: #ffffff; 
       border-radius: 24px 24px 0 0; 
-      padding: 40px 20px; 
-      /* تمت إزالة overflow-x نهائياً */
-      display: block;
+      overflow: hidden;
+      height: 800px;
+      display: flex;
     }
-
-    .cert-paper {
-      background: #ffffff !important;
-      color: #000000 !important;
-      font-family: Arial, sans-serif; 
-      padding: 40px 50px;
-      width: 1000px; /* مقاس ثابت للشهادة */
-      margin: 0 auto; 
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* صف الهيدر العلوي */
-    .cert-header-original { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .cert-logo-original { width: 25%; display: flex; justify-content: flex-start; } 
-    .cert-logo-original img { height: 60px; object-fit: contain; }
-
-    .cert-stamp-original { width: 25%; display: flex; justify-content: center; }
-    .cert-stamp-box { border: 2px solid #000; padding: 5px 15px; text-align: center; border-radius: 3px; }
-    .cert-stamp-box img { height: 22px; margin-bottom: 4px; }
-    .cert-stamp-box p { margin: 0; font-size: 10px; font-weight: bold; line-height: 1.4; color: #000; }
-
-    .cert-dept-original { width: 25%; display: flex; flex-direction: column; align-items: center; color: #5d5d9b; text-align: center; }
-    .cert-dept-original h2 { font-size: 22px; font-weight: bold; margin: 0 0 5px 0; color: var(--bg-navy); }
-    .cert-dept-original p { font-size: 16px; margin: 0; font-weight: 600; color: #CDCBE1; }
-
-    .cert-qr-original { width: 25%; display: flex; flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 10px; direction: ltr; }
-    .qr-box-wrapper { position: relative; width: 75px; height: 75px; flex-shrink: 0; }
-    .qr-box-wrapper img { width: 100%; height: 100%; }
-    .cert-qr-original span { font-size: 11px; color: #555; font-weight: 600; margin-bottom: 2px; }
-
-    /* صف العنوان والرقم المرجعي */
-    .cert-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .cert-ref-wrapper { width: 30%; display: flex; align-items: center; justify-content: flex-start; gap: 10px; }
-    .cert-ref-label { font-size: 12px; font-weight: bold; line-height: 1.3; color: #000; text-align: center; }
-    .cert-ref-value { background: var(--cert-gray); border: 1px solid #000; padding: 10px 15px; font-size: 13px; font-weight: bold; min-width: 150px; text-align: center; color: #000; }
-    .cert-main-title { width: 40%; text-align: center; font-size: 24px; color: var(--bg-navy); font-weight: bold; margin: 0; }
-    .cert-spacer { width: 30%; }
-
-    /* صف "الساده" مع "إلى من يهمه الأمر" */
-    .greeting-banner-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .greeting-sada { font-weight: bold; font-size: 14px; color: #000; white-space: nowrap; }
-    .cert-banner-new { background: var(--cert-gray); border: 1px solid #000; text-align: center; padding: 8px; font-weight: bold; font-size: 14px; color: #000; flex: 1; margin-right: 25px; }
-    .greeting-tahia { text-align: right; font-weight: bold; font-size: 14px; margin-bottom: 30px; color: #000; }
-
-    /* النصوص قبل الجدول */
-    .cert-subtitles { display: flex; justify-content: space-between; font-weight: bold; font-size: 12px; margin-bottom: 15px; color: #000; }
-
-    /* الجدول */
-    .cert-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; font-size: 13px; border: 1px solid #000; }
-    .cert-table td { border: 1px solid #000; padding: 0; vertical-align: middle; color: #000; }
-    .td-label-ar { width: 15%; padding: 10px !important; text-align: right; font-weight: bold; background: #ffffff; }
-    .td-label-en { width: 15%; padding: 10px !important; text-align: left; direction: ltr; font-weight: bold; background: #ffffff; }
-    .td-value { width: 70%; background: var(--cert-gray); text-align: center; font-weight: bold; }
-    .td-value-text { padding: 10px !important; }
-
-    .digit-grid { display: flex; width: 100%; height: 100%; direction: ltr; }
-    .digit-cell { flex: 1; padding: 12px 0; text-align: center; border-right: 1px solid #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .digit-cell:last-child { border-right: none; } 
-
-    /* الفوتر والأزرار */
-    .cert-footer-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .cert-footer-table td { border: 1px solid #000; padding: 10px 15px; font-weight: bold; color: #000; background: #ffffff; }
     
-    .actions-wrapper { background: #ffffff; border-radius: 0 0 24px 24px; padding: 30px; display: flex; justify-content: center; gap: 15px; }
+    .cert-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .actions-wrapper { background: #ffffff; border-radius: 0 0 24px 24px; padding: 30px; display: flex; justify-content: center; gap: 15px; border-top: 1px solid #e5e7eb; }
     .btn-action-outline { background: transparent; border: 1px solid var(--bg-navy); color: var(--bg-navy); padding: 0 40px; height: 50px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-action-dark { background: var(--bg-navy); border: none; color: white; padding: 0 40px; height: 50px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     
     .footer { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; margin-top: auto; width: 100%; }
 
-    /* ══════════════════════════════════════════════════════════════
-       RESPONSIVE ADJUSTMENTS FOR MOBILE
-       ══════════════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
       .bank-header { padding: 20px; grid-template-columns: 1fr 1fr; gap: 15px; }
-      .header-title { grid-column: span 2; text-align: center; justify-self: center; }
-      .header-center { justify-self: start; grid-row: 1; }
-      .header-logo { justify-self: end; grid-row: 1; }
-      
+      .header-logo { grid-column: span 2; justify-self: center; text-align: center; }
+      .header-center { justify-self: start; grid-row: 2; }
+      .header-title { justify-self: end; grid-row: 2; }
       .main-content { padding: 20px 15px; }
       .form-card { padding: 30px 20px; }
       .button-group { flex-direction: column; }
       .button-group button { width: 100%; }
       .actions-wrapper { flex-direction: column; }
       .actions-wrapper button { width: 100%; }
-    }
-
-    /* ══════════════════════════════════════════════════════════════
-       PRINT STYLES
-       ══════════════════════════════════════════════════════════════ */
-    @media print {
-      @page { size: A4 landscape; margin: 10mm; }
-      
-      body, html { background: #ffffff !important; width: 100% !important; overflow: visible !important; }
-      .bank-header, .main-content > .form-card, .actions-wrapper, .footer, .results-header-title { display: none !important; }
-      
-      .results-container, .cert-wrapper { 
-        display: block !important; 
-        width: 100% !important; 
-        max-width: 100% !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        background: #ffffff !important; 
-        overflow: visible !important;
-      }
-      
-      .cert-paper { 
-        display: block !important; 
-        width: 100% !important; 
-        min-width: 1000px !important; 
-        margin: 0 auto !important; 
-        padding: 20px !important; 
-        box-shadow: none !important; 
-        border-radius: 0 !important; 
-      }
-      
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .cert-wrapper { height: 500px; } 
     }
   </style>
 </head>
 <body>
 
   <header class="bank-header">
-    <div class="header-title"><div id="ui-main-title">الشهادات المصرفية الرقمية</div><span id="ui-sub-title">Digital Accredited Certification</span></div>
-    <div class="header-center"><button class="lang-btn" id="lang-toggle-btn">English</button></div>
     <div class="header-logo"><img src="imgs/alinma-logo.svg" alt="Alinma Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/ar/thumb/5/5a/Alinma_Bank_Logo.svg/2560px-Alinma_Bank_Logo.svg.png'"></div>
+    <div class="header-center"><button class="lang-btn" id="lang-toggle-btn">English</button></div>
+    <div class="header-title">
+      <div id="ui-main-title">الشهادات المصرفية الرقمية</div>
+      <span id="ui-sub-title">Digital Accredited Certification</span>
+    </div>
   </header>
 
   <main class="main-content">
@@ -246,92 +157,7 @@
       <h2 class="results-header-title">نتائج البحث</h2>
       
       <div class="cert-wrapper">
-        <div class="cert-paper" id="printable-cert">
-          
-          <div class="cert-header-original">
-            <div class="cert-logo-original">
-              <img src="imgs/logo.navy.svg" alt="Alinma" onerror="this.src='https://upload.wikimedia.org/wikipedia/ar/thumb/5/5a/Alinma_Bank_Logo.svg/2560px-Alinma_Bank_Logo.svg.png'">
-            </div>
-
-            <div class="cert-stamp-original">
-              <div class="cert-stamp-box">
-                <img src="imgs/logo.navy.svg" alt="logo" onerror="this.style.display='none'">
-                <p>طريق الملك فهد - الرياض</p>
-                <p dir="ltr">(HO) M1100 الفرع الرئيسي</p>
-              </div>
-            </div>
-
-            <div class="cert-dept-original">
-              <h2 id="cert-dept-ar">خدمات الشركات</h2>
-              <p id="cert-dept-en">Corporate Services</p>
-            </div>
-
-            <div class="cert-qr-original">
-              <div class="qr-box-wrapper">
-                <img src="imgs/qr-ready.png" alt="QR Code" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://dvs.alinma.com'">
-              </div>
-              <span>https://dvs.alinma.com</span>
-            </div>
-          </div>
-
-          <div class="cert-title-row">
-            <div class="cert-ref-wrapper">
-              <div class="cert-ref-label">الرقم المرجعي<br>Ref No</div>
-              <div class="cert-ref-value" id="cert-ref-number">0901000005bd2c5b</div>
-            </div>
-
-            <h1 class="cert-main-title" id="cert-title-display">شهادة بيانات العميل</h1>
-            
-            <div class="cert-spacer"></div>
-          </div>
-
-          <div class="greeting-banner-row">
-            <div class="greeting-sada">الساده</div>
-            <div class="cert-banner-new">إلى من يهمه الامر</div>
-          </div>
-
-          <div class="greeting-tahia">تحيه طيبه ...</div>
-
-          <div class="cert-subtitles" style="margin-bottom: 25px;">
-            <span>بناء علي طلب عميلنا</span>
-            <span dir="ltr">As requested by our customer</span>
-          </div>
-          <div class="cert-subtitles">
-            <span>بيانات العميل</span>
-            <span dir="ltr">Customer information</span>
-          </div>
-
-          <table class="cert-table">
-            <tr>
-              <td class="td-label-ar">إسم العميل</td>
-              <td class="td-value td-value-text" id="cert-name-val">مؤسسة الأرض المسطحة التجارية - mwssh alard almsthh altjaryh</td>
-              <td class="td-label-en">Customer name</td>
-            </tr>
-            <tr>
-              <td class="td-label-ar">رقم السجل التجاري</td>
-              <td class="td-value" id="cert-cif-grid"></td>
-              <td class="td-label-en">Customer ID</td>
-            </tr>
-            <tr>
-              <td class="td-label-ar">رقم الحساب</td>
-              <td class="td-value" id="cert-acc-grid"></td>
-              <td class="td-label-en">The account Number</td>
-            </tr>
-            <tr>
-              <td class="td-label-ar">رقم الحساب البنكي الدولي</td>
-              <td class="td-value" id="cert-iban-grid"></td>
-              <td class="td-label-en">IBAN Number</td>
-            </tr>
-          </table>
-
-          <table class="cert-footer-table">
-            <tr>
-              <td style="width: 50%; text-align: right; direction: rtl;">للتحقق من صحة هذه الوثيقة الرجاء زيارة الرابط التالى: https://dvs.alinma.com</td>
-              <td style="width: 50%; text-align: left; direction: ltr;">To check the validity of this document, please visit the following link:<br>https://dvs.alinma.com</td>
-            </tr>
-          </table>
-
-        </div>
+        <iframe id="pdf-viewer" src=""></iframe>
       </div>
 
       <div class="actions-wrapper">
@@ -455,17 +281,6 @@
       });
     }
 
-    function generateDigitGrid(containerId, valueString) {
-      const container = document.getElementById(containerId);
-      if(!container) return;
-      container.innerHTML = '';
-      let html = '<div class="digit-grid">';
-      const chars = valueString.split('');
-      chars.forEach(char => { html += `<div class="digit-cell">${char}</div>`; });
-      html += '</div>';
-      container.innerHTML = html;
-    }
-
     renderServices();
     document.getElementById('f-service').addEventListener('change', () => { document.getElementById('f-cert-type').value = ""; renderCerts(); renderDynamicFields(); });
     document.getElementById('f-cert-type').addEventListener('change', renderDynamicFields);
@@ -504,34 +319,55 @@
       const service = document.getElementById('f-service').value;
       const certIndex = document.getElementById('f-cert-type').value;
       if (!service || !certIndex) return;
-      
-      document.getElementById('cert-dept-ar').textContent = appData.services[service].ar;
-      document.getElementById('cert-dept-en').textContent = appData.services[service].en;
-      document.getElementById('cert-title-display').textContent = appData.certs[service].ar[certIndex];
 
-      const inputRef = document.getElementById('f_dyn_refNo');
-      const inputCIF = document.getElementById('f_dyn_cifNo');
-      const inputID = document.getElementById('f_dyn_idNo');
-      const inputAcc = document.getElementById('f_dyn_accNo');
-      const inputIBAN = document.getElementById('f_dyn_iban');
+      // 1. خريطة لربط كل اختيار بملف الـ PDF الخاص بيه (مطابقة لأسماء الملفات المرفوعة)
+      const pdfMapping = {
+        corporate: {
+          1: 'pdfs/Authenticated Statement_20260610_010855-1781457863772.pdf', // كشف حساب موثق
+          2: 'pdfs/Authenticated_Balance_Certificate_20260610_014522-1781457850722.pdf', // شهادة رصيد
+          3: 'pdfs/Authenticated_CA_Balance_20260610_011232-1781457828127.pdf', // شهادة رصيد الحساب الجاري
+          4: 'pdfs/Auth_Partner_Info_20260610_020556.pdf' // شهادة بيانات الشريك
+        }
+      };
       
-      const refVal = (inputRef && inputRef.value) ? inputRef.value : '0901000005bd2c5b';
-      const idOrCifVal = (inputCIF && inputCIF.value) ? inputCIF.value : (inputID && inputID.value ? inputID.value : '7027537369');
-      const accVal = (inputAcc && inputAcc.value) ? inputAcc.value : '6820434600600';
-      const ibanVal = (inputIBAN && inputIBAN.value) ? inputIBAN.value : 'SA73050000682043460060';
+      // الملف الافتراضي لأي شهادة تانية
+      const defaultPdf = 'pdfs/Auth_Partner_Info_20260610_020556.pdf';
 
-      document.getElementById('cert-ref-number').textContent = refVal;
-      generateDigitGrid('cert-cif-grid', idOrCifVal);
-      generateDigitGrid('cert-acc-grid', accVal);
-      generateDigitGrid('cert-iban-grid', ibanVal);
+      // 2. اختيار الملف بناءً على الخدمة ونوع الشهادة
+      let selectedPdf = defaultPdf;
+      if (service === 'corporate' && pdfMapping.corporate[certIndex]) {
+        selectedPdf = pdfMapping.corporate[certIndex];
+      }
+
+      // 3. عرض الملف في الـ iframe
+      document.getElementById('pdf-viewer').src = selectedPdf;
+
+      // 4. إرفاق رابط الـ PDF بالأزرار للتحميل والطباعة
+      document.getElementById('btn-save').setAttribute('data-pdf', selectedPdf);
+      document.getElementById('btn-print').setAttribute('data-pdf', selectedPdf);
 
       const resultsContainer = document.getElementById('results-container');
       resultsContainer.style.display = 'block';
       setTimeout(() => { resultsContainer.scrollIntoView({ behavior: 'smooth' }); }, 100);
     });
 
-    document.getElementById('btn-print').addEventListener('click', () => window.print());
-    document.getElementById('btn-save').addEventListener('click', () => window.print());
+    // وظائف الأزرار الجديدة (فتح وتحميل الـ PDF)
+    document.getElementById('btn-print').addEventListener('click', function() {
+      const pdfUrl = this.getAttribute('data-pdf');
+      if(pdfUrl) window.open(pdfUrl, '_blank'); 
+    });
+
+    document.getElementById('btn-save').addEventListener('click', function() {
+      const pdfUrl = this.getAttribute('data-pdf');
+      if(pdfUrl) {
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = pdfUrl.split('/').pop(); 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
   </script>
 
 </body>
