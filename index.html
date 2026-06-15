@@ -9,8 +9,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  <style>
-    /* ... باقي الكود بتاعك زي ما هو ... */
+ <style>
     /* ══════════════════════════════════════════════════════════════
        DESIGN TOKENS & RESET
        ══════════════════════════════════════════════════════════════ */
@@ -35,6 +34,7 @@
       display: flex;
       flex-direction: column;
       font-weight: 600; 
+      overflow-x: auto; /* السماح للصفحة بالكامل بعمل سكرول أفقي */
     }
 
     /* ══════════════════════════════════════════════════════════════
@@ -47,10 +47,12 @@
     .lang-btn { background: transparent; border: 1.5px solid white; color: white; padding: 6px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
     .lang-btn:hover { background: rgba(255,255,255,0.15); }
     .header-logo { justify-self: end; display: flex; align-items: center; gap: 12px; }
-    .header-logo img { filter: brightness(0) invert(1); } 
+    .header-logo img { filter: brightness(0) invert(1); height: 44px; } 
 
-    .main-content { flex: 1; padding: 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 40px; }
-    .form-card { width: 100%; max-width: 1100px; background: linear-gradient(270deg, #ffffff 60%, #fff0ed 100%); border-radius: 24px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    /* تم إزالة align-items: center للسماح بتمدد المحتوى بحرية */
+    .main-content { flex: 1; padding: 20px 40px; display: flex; flex-direction: column; gap: 40px; }
+    
+    .form-card { width: 100%; max-width: 1100px; align-self: center; background: linear-gradient(270deg, #ffffff 60%, #fff0ed 100%); border-radius: 24px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
     .form-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; color: var(--bg-navy); }
     .required-note { font-size: 13px; color: var(--text-gray); margin-bottom: 30px; font-weight: 700; }
     .required-note .asterisk { color: var(--danger); font-size: 16px; font-weight: bold; }
@@ -77,31 +79,40 @@
     .btn-search { background: var(--btn-purple); border: none; color: white; padding: 0 50px; height: 48px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
 
     /* ══════════════════════════════════════════════════════════════
-       RESULTS SECTION (الشهادة الأصلية المليانة بالمسطرة)
+       RESULTS SECTION (الشهادة حرة وبدون Container داخلي مقفول)
        ══════════════════════════════════════════════════════════════ */
-    .results-container { width: 100%; max-width: 1200px; display: none; animation: fadeIn 0.5s ease-in-out; }
+    .results-container { 
+      width: max-content; /* تتمدد مع حجم الشهادة */
+      min-width: 100%; 
+      align-self: center; /* توسيط الحاوية */
+      display: none; 
+      animation: fadeIn 0.5s ease-in-out; 
+      margin: 0 auto; 
+    }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .results-header-title { font-size: 32px; font-weight: 700; color: white; margin-bottom: 20px; }
-    .cert-wrapper { background: #f0f0f0; border-radius: 24px 24px 0 0; padding: 40px; display: flex; justify-content: center; }
+    
+    .results-header-title { font-size: 32px; font-weight: 700; color: white; margin-bottom: 20px; text-align: center; }
+    
+    .cert-wrapper { 
+      background: #f0f0f0; 
+      border-radius: 24px 24px 0 0; 
+      padding: 40px 20px; 
+      /* تمت إزالة overflow-x نهائياً */
+      display: block;
+    }
 
     .cert-paper {
       background: #ffffff !important;
       color: #000000 !important;
       font-family: Arial, sans-serif; 
       padding: 40px 50px;
-      width: 100%;
-      max-width: 1050px;
+      width: 1000px; /* مقاس ثابت للشهادة */
+      margin: 0 auto; 
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     /* صف الهيدر العلوي */
-    .cert-header-original {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-    
+    .cert-header-original { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
     .cert-logo-original { width: 25%; display: flex; justify-content: flex-start; } 
     .cert-logo-original img { height: 60px; object-fit: contain; }
 
@@ -110,19 +121,11 @@
     .cert-stamp-box img { height: 22px; margin-bottom: 4px; }
     .cert-stamp-box p { margin: 0; font-size: 10px; font-weight: bold; line-height: 1.4; color: #000; }
 
-    .cert-dept-original { width: 25%; display: flex; flex-direction: column; align-items: center; color: #5d5d9b; }
+    .cert-dept-original { width: 25%; display: flex; flex-direction: column; align-items: center; color: #5d5d9b; text-align: center; }
     .cert-dept-original h2 { font-size: 22px; font-weight: bold; margin: 0 0 5px 0; color: var(--bg-navy); }
     .cert-dept-original p { font-size: 16px; margin: 0; font-weight: 600; color: #CDCBE1; }
 
-    .cert-qr-original { 
-      width: 25%; 
-      display: flex; 
-      flex-direction: row; 
-      align-items: flex-end; 
-      justify-content: flex-start; 
-      gap: 10px; 
-      direction: ltr; 
-    }
+    .cert-qr-original { width: 25%; display: flex; flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 10px; direction: ltr; }
     .qr-box-wrapper { position: relative; width: 75px; height: 75px; flex-shrink: 0; }
     .qr-box-wrapper img { width: 100%; height: 100%; }
     .cert-qr-original span { font-size: 11px; color: #555; font-weight: 600; margin-bottom: 2px; }
@@ -136,36 +139,10 @@
     .cert-spacer { width: 30%; }
 
     /* صف "الساده" مع "إلى من يهمه الأمر" */
-    .greeting-banner-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .greeting-sada {
-      font-weight: bold;
-      font-size: 14px;
-      color: #000;
-      white-space: nowrap;
-    }
-    .cert-banner-new {
-      background: var(--cert-gray);
-      border: 1px solid #000;
-      text-align: center;
-      padding: 8px;
-      font-weight: bold;
-      font-size: 14px;
-      color: #000;
-      flex: 1;
-      margin-right: 25px;
-    }
-    .greeting-tahia {
-      text-align: right;
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 30px;
-      color: #000;
-    }
+    .greeting-banner-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .greeting-sada { font-weight: bold; font-size: 14px; color: #000; white-space: nowrap; }
+    .cert-banner-new { background: var(--cert-gray); border: 1px solid #000; text-align: center; padding: 8px; font-weight: bold; font-size: 14px; color: #000; flex: 1; margin-right: 25px; }
+    .greeting-tahia { text-align: right; font-weight: bold; font-size: 14px; margin-bottom: 30px; color: #000; }
 
     /* النصوص قبل الجدول */
     .cert-subtitles { display: flex; justify-content: space-between; font-weight: bold; font-size: 12px; margin-bottom: 15px; color: #000; }
@@ -185,18 +162,59 @@
     /* الفوتر والأزرار */
     .cert-footer-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .cert-footer-table td { border: 1px solid #000; padding: 10px 15px; font-weight: bold; color: #000; background: #ffffff; }
+    
     .actions-wrapper { background: #ffffff; border-radius: 0 0 24px 24px; padding: 30px; display: flex; justify-content: center; gap: 15px; }
     .btn-action-outline { background: transparent; border: 1px solid var(--bg-navy); color: var(--bg-navy); padding: 0 40px; height: 50px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-action-dark { background: var(--bg-navy); border: none; color: white; padding: 0 40px; height: 50px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .footer { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; margin-top: auto; }
+    
+    .footer { text-align: center; padding: 20px; color: #94a3b8; font-size: 11px; font-weight: 600; margin-top: auto; width: 100%; }
+
+    /* ══════════════════════════════════════════════════════════════
+       RESPONSIVE ADJUSTMENTS FOR MOBILE
+       ══════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .bank-header { padding: 20px; grid-template-columns: 1fr 1fr; gap: 15px; }
+      .header-title { grid-column: span 2; text-align: center; justify-self: center; }
+      .header-center { justify-self: start; grid-row: 1; }
+      .header-logo { justify-self: end; grid-row: 1; }
+      
+      .main-content { padding: 20px 15px; }
+      .form-card { padding: 30px 20px; }
+      .button-group { flex-direction: column; }
+      .button-group button { width: 100%; }
+      .actions-wrapper { flex-direction: column; }
+      .actions-wrapper button { width: 100%; }
+    }
 
     /* ══════════════════════════════════════════════════════════════
        PRINT STYLES
        ══════════════════════════════════════════════════════════════ */
     @media print {
-      body, html { background: #ffffff !important; }
+      @page { size: A4 landscape; margin: 10mm; }
+      
+      body, html { background: #ffffff !important; width: 100% !important; overflow: visible !important; }
       .bank-header, .main-content > .form-card, .actions-wrapper, .footer, .results-header-title { display: none !important; }
-      .results-container, .cert-wrapper, .cert-paper { display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; background: #ffffff !important; border-radius: 0 !important; }
+      
+      .results-container, .cert-wrapper { 
+        display: block !important; 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        background: #ffffff !important; 
+        overflow: visible !important;
+      }
+      
+      .cert-paper { 
+        display: block !important; 
+        width: 100% !important; 
+        min-width: 1000px !important; 
+        margin: 0 auto !important; 
+        padding: 20px !important; 
+        box-shadow: none !important; 
+        border-radius: 0 !important; 
+      }
+      
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
@@ -206,7 +224,7 @@
   <header class="bank-header">
     <div class="header-title"><div id="ui-main-title">الشهادات المصرفية الرقمية</div><span id="ui-sub-title">Digital Accredited Certification</span></div>
     <div class="header-center"><button class="lang-btn" id="lang-toggle-btn">English</button></div>
-    <div class="header-logo"><img src="imgs/alinma-logo.svg" alt="Alinma Logo" style="height: 44px;"></div>
+    <div class="header-logo"><img src="imgs/alinma-logo.svg" alt="Alinma Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/ar/thumb/5/5a/Alinma_Bank_Logo.svg/2560px-Alinma_Bank_Logo.svg.png'"></div>
   </header>
 
   <main class="main-content">
@@ -232,12 +250,12 @@
           
           <div class="cert-header-original">
             <div class="cert-logo-original">
-              <img src="imgs/logo.navy.svg" alt="Alinma">
+              <img src="imgs/logo.navy.svg" alt="Alinma" onerror="this.src='https://upload.wikimedia.org/wikipedia/ar/thumb/5/5a/Alinma_Bank_Logo.svg/2560px-Alinma_Bank_Logo.svg.png'">
             </div>
 
             <div class="cert-stamp-original">
               <div class="cert-stamp-box">
-                <img src="imgs/logo.navy.svg" alt="logo">
+                <img src="imgs/logo.navy.svg" alt="logo" onerror="this.style.display='none'">
                 <p>طريق الملك فهد - الرياض</p>
                 <p dir="ltr">(HO) M1100 الفرع الرئيسي</p>
               </div>
@@ -250,7 +268,7 @@
 
             <div class="cert-qr-original">
               <div class="qr-box-wrapper">
-                <img src="imgs/qr-ready.png" alt="QR Code">
+                <img src="imgs/qr-ready.png" alt="QR Code" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://dvs.alinma.com'">
               </div>
               <span>https://dvs.alinma.com</span>
             </div>
