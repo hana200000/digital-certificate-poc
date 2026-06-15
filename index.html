@@ -83,7 +83,7 @@
       width: 100%; 
       max-width: 1100px; 
       align-self: center; 
-      display: none; /* تم إرجاع الإخفاء عشان النتيجة متظهرش غير بعد البحث */
+      display: none; 
       animation: fadeIn 0.5s ease-in-out; 
       margin: 0 auto; 
     }
@@ -176,9 +176,8 @@
       </div>
 
       <div class="actions-wrapper">
-        <button type="button" class="btn-action-outline" id="btn-save" data-pdf="">حفظ PDF</button>
-        <button type="button" class="btn-action-outline" id="btn-excel" style="display: none; border-color: #107c41; color: #107c41;">تحميل Excel</button>
-        <button type="button" class="btn-action-dark" id="btn-print" data-pdf="">طباعة / عرض</button>
+        <button type="button" class="btn-action-outline" id="btn-save">حفظ الملف</button>
+        <button type="button" class="btn-action-dark" id="btn-print">طباعة / عرض</button>
       </div>
     </div>
   </main>
@@ -275,8 +274,6 @@
       const currentValues = {};
       container.querySelectorAll('input').forEach(input => { currentValues[input.id] = input.value; });
       container.innerHTML = ''; 
-      
-      // إخفاء النتيجة لما اليوزر يغير نوع الشهادة
       document.getElementById('results-container').style.display = 'none';
 
       if (!srvVal || !certIndex || !certFieldsMap[srvVal] || !certFieldsMap[srvVal][certIndex]) return;
@@ -328,9 +325,7 @@
       setTimeout(() => {
         renderCerts();
         renderDynamicFields();
-        // إخفاء النتيجة بالكامل لما يدوس مسح
         document.getElementById('results-container').style.display = 'none';
-        document.getElementById('pdf-viewer').src = '';
       }, 10);
     });
 
@@ -340,12 +335,12 @@
       const certIndex = document.getElementById('f-cert-type').value;
       if (!service || !certIndex) return;
 
-      const inputRef = document.getElementById('f_dyn_refNo');
-      const refVal = (inputRef && inputRef.value) ? inputRef.value.trim() : '';
-
+      // ══════════════════════════════════════════════════════════════
+      // التعديل هنا: تم تغيير الملف الخاص بـ "كشف حساب موثق" (index 1)
+      // ══════════════════════════════════════════════════════════════
       const pdfMapping = {
         corporate: {
-          1: 'pdfs/كشف مؤسسه الأرض المسطحه.pdf', 
+          1: 'pdfs/كشف مؤسسه الأرض المسطحه.pdf', // التعديل الجديد بناءً على طلبك
           2: 'pdfs/Authenticated_Balance_Certificate_20260610_014522-1781457850722.pdf', 
           3: 'pdfs/Authenticated_CA_Balance_20260610_011232-1781457828127.pdf', 
           4: 'pdfs/Auth_Partner_Info_20260610_020556.pdf' 
@@ -355,34 +350,14 @@
       const defaultPdf = 'pdfs/Auth_Partner_Info_20260610_020556.pdf';
 
       let selectedPdf = defaultPdf;
-      if (service === 'corporate') {
-        if (certIndex === '1') {
-          if (refVal === '11112222') {
-            selectedPdf = 'pdfs/statement_special_1.pdf'; 
-          } else {
-            selectedPdf = pdfMapping.corporate[1]; 
-          }
-        } else if (pdfMapping.corporate[certIndex]) {
-           selectedPdf = pdfMapping.corporate[certIndex];
-        }
+      if (service === 'corporate' && pdfMapping.corporate[certIndex]) {
+        selectedPdf = pdfMapping.corporate[certIndex];
       }
 
       document.getElementById('pdf-viewer').src = selectedPdf;
       document.getElementById('btn-save').setAttribute('data-pdf', selectedPdf);
       document.getElementById('btn-print').setAttribute('data-pdf', selectedPdf);
 
-      // ══════════════════════════════════════════════════════════════
-      // إظهار أو إخفاء زرار الـ Excel بناءً على نوع الشهادة المحددة
-      // ══════════════════════════════════════════════════════════════
-      const btnExcel = document.getElementById('btn-excel');
-      if (service === 'corporate' && certIndex === '1') {
-        btnExcel.style.display = 'inline-block'; // إظهار الزرار للـ Excel
-        btnExcel.setAttribute('data-excel', 'pdfs/اكسل مؤسسه الارض المسطحه.xlsx'); // مسار ملف الإكسيل
-      } else {
-        btnExcel.style.display = 'none'; // إخفاء الزرار لباقي الشهادات
-      }
-
-      // إظهار قسم النتيجة وعمل سكرول ليه
       const resultsContainer = document.getElementById('results-container');
       resultsContainer.style.display = 'block';
       setTimeout(() => { resultsContainer.scrollIntoView({ behavior: 'smooth' }); }, 100);
@@ -399,18 +374,6 @@
         const link = document.createElement('a');
         link.href = pdfUrl;
         link.download = pdfUrl.split('/').pop(); 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    });
-
-    document.getElementById('btn-excel').addEventListener('click', function() {
-      const excelUrl = this.getAttribute('data-excel');
-      if(excelUrl) {
-        const link = document.createElement('a');
-        link.href = excelUrl;
-        link.download = excelUrl.split('/').pop(); 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
