@@ -114,22 +114,18 @@
        MOBILE RESPONSIVE
        ══════════════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
-      /* إجبار الهيدر إنه يفضل في سطر واحد (Row) */
       .bank-header { 
         display: flex; 
         flex-direction: row; 
         justify-content: space-between; 
         align-items: center; 
         padding: 15px 15px; 
-        gap: 5px; /* تقليل المسافات لضمان عدم الكسر */
-        flex-wrap: nowrap; /* منع النزول لسطر جديد */
+        gap: 5px;
+        flex-wrap: nowrap;
       }
       
-      /* تصغير أحجام عناصر الهيدر عشان يكفوا السطر */
       .header-logo img { height: 26px; } 
-      
       .lang-btn { padding: 4px 10px; font-size: 11px; }
-      
       .header-title { font-size: 12px; line-height: 1.2; text-align: left; }
       .header-title span { font-size: 9px; }
 
@@ -339,9 +335,12 @@
       const certIndex = document.getElementById('f-cert-type').value;
       if (!service || !certIndex) return;
 
+      // ══════════════════════════════════════════════════════════════
+      // التعديل هنا: تم تغيير الملف الخاص بـ "كشف حساب موثق" (index 1)
+      // ══════════════════════════════════════════════════════════════
       const pdfMapping = {
         corporate: {
-          1: 'pdfs/Authenticated Statement_20260610_010855-1781457863772.pdf', 
+          1: 'pdfs/كشف حساب موثق.pdf', // تم التحديث بناءً على الفولدر بتاعك
           2: 'pdfs/Authenticated_Balance_Certificate_20260610_014522-1781457850722.pdf', 
           3: 'pdfs/Authenticated_CA_Balance_20260610_011232-1781457828127.pdf', 
           4: 'pdfs/Auth_Partner_Info_20260610_020556.pdf' 
